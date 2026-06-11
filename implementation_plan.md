@@ -232,7 +232,7 @@ One template per section, in `services/prompts.py` as plain strings with `.forma
 Use Streamlit's native multi-page app feature. Sidebar shows current `session_id` + uploaded resume name so the user always knows where they are.
 
 ### Page 1 — Upload
-- File uploader (PDF/DOCX, ≤ 2 MB).
+- File uploader (PDF/DOCX, ≤ 5 MB).
 - On submit, POST to `/upload`, store `session_id` in `st.session_state`.
 - Show extracted text in a collapsed expander so the user can verify parsing worked.
 

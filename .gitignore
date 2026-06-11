@@ -1,0 +1,21 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# --- Virtual environments ---
+.venv/
+venv/
+env/
+
+# --- Environment / secrets ---
+.env
+
+# --- Databases (local SQLite) ---
+*.db
+*.sqlite3
+
+# --- OS / editor cruft ---
+.DS_Store
+.idea/
+*.log
