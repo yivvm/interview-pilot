@@ -8,12 +8,26 @@ Then open:
     http://localhost:8000/docs    -> auto-generated interactive API docs
 """
 
+from contextlib import asynccontextmanager
+
 import httpx
 from fastapi import FastAPI
 
 from app.config import settings
+from app.db import init_db
+from app.routers import upload
 
-app = FastAPI(title="InterviewPilot API", version="0.1.0")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Runs once on startup: create DB tables if they don't exist yet.
+    init_db()
+    yield
+    # (noting to clean up on shutdown for now)
+
+app = FastAPI(title="InterviewPilot API", version="0.1.0", lifespan=lifespan)
+
+# Register routers.
+app.include_router(upload.router)
 
 @app.get("/health")
 async def health() -> dict:
