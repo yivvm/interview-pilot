@@ -1,27 +1,31 @@
 import streamlit as st
 
 from lib.api import interview_prep_session
-from lib.ui import inject_css
+from lib.ui import inject_css, resume_input
 
 inject_css()
 
 st.title("3 · Interview Prep")
 
-session_id = st.session_state.get("session_id")
+session_id = resume_input("inteview")
 if not session_id:
-    st.warning("Please upload a resume first on the **1 · Upload** page.")
-    st.stop()
-
-if not st.session_state.get("jd_text"):
-    st.warning("Please run **3 · JD Match** first — interview prep uses that job description.")
+    st.info("Upload a resume above to begin.")
     st.stop()
 
 st.write(f"Prepping for: **{st.session_state.get('resume_filename', '')}**")
 
-if st.button("Generate interview questions"):
+jd_text = st.text_area(
+    "Job description",
+    value=st.session_state.get("jd_text", ""),
+    height=200,
+    placeholder="Paste the job description here...",
+)
+
+if st.button("Generate interview questions") and jd_text.strip():
+    st.session_state["jd_text"] = jd_text   # reuse
     with st.spinner("Generating quesitons... (first run can take ~20s)"):
         try:
-            result = interview_prep_session(session_id)
+            result = interview_prep_session(session_id, jd_text)
         except Exception as exc:
             st.error(f"Generation failed: {exc}")
         else:

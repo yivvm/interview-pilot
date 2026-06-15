@@ -62,8 +62,11 @@ def match_resume_session(session_id: str, jd_text: str) -> str:
     return resp.json()
 
 
-def interview_prep_session(session_id: str) -> str:
+def interview_prep_session(session_id: str, jd_text: str | None = None) -> dict:
     """POST to /interview (uses the JD saved on the session); return the JSON."""
+    payload = {"session_id": session_id}
+    if jd_text:
+        payload["jd_text"] = jd_text
     resp = httpx.post(
         f"{BACKEND_URL}/interview",
         json={"session_id": session_id},
