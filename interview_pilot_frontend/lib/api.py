@@ -25,3 +25,23 @@ def upload_resume(filename: str, data: bytes, content_type: str) -> str:
             detail = resp.text
         raise RuntimeError(detail)
     return resp.json()
+
+
+def review_resume_session(session_id: str) -> str:
+    """POST to /review and return the analysis JSON.
+    
+    Uses a long timeout because the first (uncached) call runs the LLM.
+    """
+    resp = httpx.post(
+        f"{BACKEND_URL}/review",
+        json={"session_id": session_id},
+        timeout=120.0,
+    )
+    if resp.status_code != 200:
+        try:
+            detail = resp.json().get("detail", resp.text)
+        except Exception:
+            detail = resp.text
+        raise RuntimeError(detail)
+    return resp.json()
+
