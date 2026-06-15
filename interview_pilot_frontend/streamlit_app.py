@@ -15,7 +15,7 @@ st.set_page_config(page_title="InterviewPilot", layout="wide")
 
 st.title("Interview Pilot")
 st.write("AI-powered resume review and interview prep - all running locally.")
-st.info("Navigate with the siderbar: **Upload → Resume Review → Job Description Match → Interview Prep**.")
+st.info("Navigate with the sidebar: **Resume Review → Job Description Match → Interview Prep**.")
 
 # Sidebar always show where the user is in the flow.
 with st.sidebar:
