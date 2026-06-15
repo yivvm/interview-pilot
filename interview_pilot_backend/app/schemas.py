@@ -14,3 +14,21 @@ class ReviewResponse(BaseModel):
     weaknesses: list[str]
     story_prompts: list[str]
     cached: bool = False   # True if served from cache, not a fresh LLM call
+
+
+class Gap(BaseModel):
+    skill: str
+    severity: str
+    suggestion: str
+
+class Rewrite(BaseModel):
+    original: str
+    improved: str
+
+class MatchResponse(BaseModel):
+    match_score: int
+    matching_skills: list[str]
+    gaps: list[Gap]
+    rewrite_suggestions: list[Rewrite]
+    cached: bool = False
+

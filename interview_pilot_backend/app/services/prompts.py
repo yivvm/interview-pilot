@@ -31,3 +31,35 @@ Rules:
 def build_review_user(resume_text: str) -> str:
     """Build the user message for the resume-review call."""
     return f"Here is the resume to review:\n\n{resume_text}"
+
+
+# ---------------------------------------------------------------------------
+# Section 2 - JD-Targetd Match (with job description)
+# ---------------------------------------------------------------------------
+
+MATCH_SYSTEM = """You are a senior career coach comparing a resume against a \
+sepcific job description. Response with ONLY a valid JSON object, no prose, in \
+exactly this shape:
+
+{
+  "match_score": <integer 0-100>,
+  "matching_skills": ["skill", ...],
+  "gaps": [
+    {"skill": "name", "severity": "high|medium|low", "suggestion": "actionable tip"}
+  ],
+  "rewrite_suggestions": [
+    {"original": "a bullet from the resume", "improved": "a stronger, JD-aligned rewrite"}
+  ]
+}
+
+Rules:
+- "match_score": your honest 0-100 estimate of how well the resume fits the JD.
+- "matching_skills": requirements the resume already satisfies.
+- "gaps": 3-6 missing or weak requirements, each with a severity and a concrete suggestion.
+- "rewrite_suggestions": 2-4 resume bullets rewritten to better target this JD.
+- Use only information present in the resume; do not invent experience.
+- Respond with JSON only."""
+
+def build_match_user(resume_text: str, jd_text: str) -> str:
+    """Build the user message for the JD-match call."""
+    return f"RESUME: \n{resume_text}\n\nJOB DESCRIPTION:\n{jd_text}"
