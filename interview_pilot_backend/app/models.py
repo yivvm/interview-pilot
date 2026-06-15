@@ -3,7 +3,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import Column, DateTime, String, Text
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text
 
 from app.db import Base
 
@@ -22,3 +22,16 @@ class Session(Base):
     resume_filename = Column(String, nullable=False)
     resume_text = Column(Text, nullable=False)
     jb_text = Column(Text, nullable=True)
+
+class Analysis(Base):
+    """A cached LLM result for one section of one session."""
+
+    __tablename__ = "analyses"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    session_id = Column(String, ForeignKey("sessions.id"), nullable=False)
+    kind = Column(String, nullable=False)   # "review" | "match" | "interview"
+    created_at = Column(DateTime, default=datetime.utcnow)
+    payload_json = Column(Text, nullable=False)   # the full LLM JSON response, as text
+    model_name = Column(String, nullable=False)   # e.g. "llama3.1:8b"
+    
