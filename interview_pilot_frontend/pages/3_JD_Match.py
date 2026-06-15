@@ -5,7 +5,7 @@ from lib.ui import inject_css
 
 inject_css()
 
-st.title("3 · Job Description Match")
+st.title("2 · Job Description Match")
 
 session_id = st.session_state.get("session_id")
 if not session_id:

@@ -1,15 +1,15 @@
 import streamlit as st
 
 from lib.api import review_resume_session
-from lib.ui import inject_css
+from lib.ui import inject_css, resume_input
 
 inject_css()
 
-st.title("2 · Resume Review")
+st.title("1 · Resume Review")
 
-session_id = st.session_state.get("session_id")
+session_id = resume_input("review")
 if not session_id:
-    st.warning("Please upload a resume first on the **1 · Upload** page.")
+    st.info("Upload aresume above to begin")
     st.stop()
 
 st.write(f"Reviewing resume: **{st.session_state.get('resume_filename', '')}**")
