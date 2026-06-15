@@ -60,3 +60,19 @@ def match_resume_session(session_id: str, jd_text: str) -> str:
             detail = resp.text
         raise RuntimeError(detail)
     return resp.json()
+
+
+def interview_prep_session(session_id: str) -> str:
+    """POST to /interview (uses the JD saved on the session); return the JSON."""
+    resp = httpx.post(
+        f"{BACKEND_URL}/interview",
+        json={"session_id": session_id},
+        timeout=120.0,
+    )
+    if resp.status_code != 200:
+        try:
+            detail = resp.json().get("detail", resp.text)
+        except Exception:
+            detail = resp.text
+        raise RuntimeError(detail)
+    return resp.json()
