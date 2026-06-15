@@ -1,6 +1,9 @@
 import streamlit as st
 
 from lib.api import upload_resume
+from lib.ui import inject_css
+
+inject_css()
 
 st.title(" 1 · Upload")
 st.write("Upload your resume (PDF or DOCX). We'll extract the text for anlaysis.")

@@ -1,6 +1,9 @@
 import streamlit as st
 
 from lib.api import review_resume_session
+from lib.ui import inject_css
+
+inject_css()
 
 st.title("2 · Resume Review")
 
@@ -26,16 +29,14 @@ if result:
     if result.get("cached"):
         st.caption("✓ Loaded from saved result")
 
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.subheader("✅ Strengths")
-        for item in result["strengths"]:
-            st.markdown(f"- {item}")
-    with col2:
-        st.subheader("⚠️  Weaknesses")
-        for item in result["weaknesses"]:
-            st.markdown(f"- {item}")
-    with col3:
-        st.subheader("💡 Stories to share")
-        for item in result["story_prompts"]:
-            st.markdown(f"- {item}")
+    st.subheader("Strengths")
+    for item in result["strengths"]:
+        st.markdown(f"- {item}")
+
+    st.subheader("Weaknesses")
+    for item in result["weaknesses"]:
+        st.markdown(f"- {item}")
+
+    st.subheader("Stories to share")
+    for item in result["story_prompts"]:
+        st.markdown(f"- {item}")

@@ -7,9 +7,13 @@ Opens at http://localhost:8501
 
 import streamlit as st
 
-st.set_page_config(page_title="InterviewPilot", page_icon="🎯", layout="wide")
+from lib.ui import inject_css
 
-st.title("🎯 InterviewPilot")
+inject_css()
+
+st.set_page_config(page_title="InterviewPilot", layout="wide")
+
+st.title("Interview Pilot")
 st.write("AI-powered resume review and interview prep - all running locally.")
 st.info("Navigate with the siderbar: **Upload → Resume Review → Job Description Match → Interview Prep**.")
 

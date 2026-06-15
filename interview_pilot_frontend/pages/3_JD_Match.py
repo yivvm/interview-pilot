@@ -1,6 +1,9 @@
 import streamlit as st
 
 from lib.api import match_resume_session
+from lib.ui import inject_css
+
+inject_css()
 
 st.title("3 · Job Description Match")
 
@@ -37,21 +40,21 @@ if result:
     st.metric("Match score", f"{result['match_score']} / 100")
 
     # Maching skills as chips
-    st.subheader("✅ Matching skills")
+    st.subheader("Matching skills")
     if result["matching_skills"]:
         st.write("  ".join(f"`{s}`" for s in result["matching_skills"]))
     else:
         st.write("_None detected_")
     
     # Gaps with severity colot
-    st.subheader("⚠️ Gaps")
+    st.subheader("Gaps")
     severity_emoji = {"high": "🔴", "medium": "🟠", "low": "🟡"}
     for gap in result["gaps"]:
         dot = severity_emoji.get(gap.get("severity", "").lower(), "⚪")
         st.markdown(f"{dot} **{gap['skill']}** ({gap.get('severity', '?')}) - {gap['suggestion']}")
 
     # Rewrite suggestions as before/after
-    st.subheader("✍️  Rewrite suggestions")
+    st.subheader("Rewrite suggestions")
     for rw in result["rewrite_suggestions"]:
         with st.container(border=True):
             st.markdown(f"**Before:** {rw['original']}")

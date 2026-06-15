@@ -1,6 +1,9 @@
 import streamlit as st
 
 from lib.api import interview_prep_session
+from lib.ui import inject_css
+
+inject_css()
 
 st.title("4 · Interview Prep")
 
