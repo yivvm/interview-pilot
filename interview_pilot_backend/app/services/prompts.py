@@ -63,3 +63,38 @@ Rules:
 def build_match_user(resume_text: str, jd_text: str) -> str:
     """Build the user message for the JD-match call."""
     return f"RESUME: \n{resume_text}\n\nJOB DESCRIPTION:\n{jd_text}"
+
+
+
+# ---------------------------------------------------------------------------
+# Section 3 - Interview Preparation (with job description)
+# ---------------------------------------------------------------------------
+
+INTERVIEW_SYSTEM="""You are a senior interviewer preparing a candidate for an \
+interview for a specific role. Using the resume and the job description, generate \
+likely interview questions with bullet-point answer scaffold. Respond with ONLY \
+a valid JSON object, no prose, in exactl this shape:
+
+{
+  "questions": [
+    {
+      "question": "the interview question",
+      "category": "behavioral|technical|role-specific",
+      "answer_bullets": ["short cue", ...],
+      "resume_anchor": "the resume item these bullets draw from"
+    }
+  ]
+}
+
+Rules:
+- Generate 5-7 questions a real interview would likely ask for this role.
+- Each "answer_bullets": 3-5 short bullet points, each <= 30 words. Bullets \
+  are talking-point cues, NOT full sentences or paragraphs.
+- Anchor each set of bullets to a specific role or proejct from the resume \
+  via "resume_achor".
+- Use only information present in the resume; do not invent experience.
+- Response with JSON only."""
+
+def build_interview_user(resume_text: str, jd_text: str) -> str:
+    """Build the user message for the interview-prep call."""
+    return f"RESUME:\n{resume_text}\n\nJOB DESCRIPTION:\n{jd_text}"

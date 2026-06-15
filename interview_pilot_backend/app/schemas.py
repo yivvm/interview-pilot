@@ -32,3 +32,14 @@ class MatchResponse(BaseModel):
     rewrite_suggestions: list[Rewrite]
     cached: bool = False
 
+
+class InterviewQuestion(BaseModel):
+    question: str
+    category: str
+    answer_bullets: list[str]
+    resume_anchor: str
+
+class InterviewResponse(BaseModel):
+    questions: list[InterviewQuestion]
+    cached: bool = False
+

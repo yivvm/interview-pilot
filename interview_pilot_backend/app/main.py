@@ -15,7 +15,7 @@ from fastapi import FastAPI
 
 from app.config import settings
 from app.db import init_db
-from app.routers import match, review, upload
+from app.routers import interview, match, review, upload
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -30,6 +30,7 @@ app = FastAPI(title="InterviewPilot API", version="0.1.0", lifespan=lifespan)
 app.include_router(upload.router)
 app.include_router(review.router)
 app.include_router(match.router)
+app.include_router(interview.router)
 
 @app.get("/health")
 async def health() -> dict:

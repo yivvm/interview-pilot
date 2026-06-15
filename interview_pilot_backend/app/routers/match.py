@@ -31,7 +31,7 @@ async def match_resume(
         raise HTTPException(status_code=404, detail="Session not found.")
     
     # Save the JD so Section 3 (/interview) can reuse it.
-    session.id_text = body.jd_text
+    session.jd_text = body.jd_text
     db.commit()
 
     # Cache check.
