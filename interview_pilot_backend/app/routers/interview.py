@@ -18,7 +18,7 @@ router = APIRouter()
 
 class InterviewRequest(BaseModel):
     session_id: str
-    # jd_text: str
+    jd_text: str | None = None
 
 
 @router.post("/interview", response_model=InterviewResponse)
@@ -29,6 +29,16 @@ async def interview_prep(
     session = db.get(Session, body.session_id)
     if session is None:
         raise HTTPException(status_code=404, detail="Session not found.")
+    
+    # Optionally accept a new JD from this page; invalidate stale cache if changed.
+    if body.jd_text and body.jd_text.strip() and body.jd_text != session.jd_text:
+        db.query(Analysis).filter(
+            Analysis.session_id == session.id,
+            Analysis.kind == "interview",
+        ).delete(synchronize_session=False)
+        session.jd_text = body.jd_text
+        db.commit()
+
     if not session.jd_text:
         raise HTTPException(
             status_code=400,

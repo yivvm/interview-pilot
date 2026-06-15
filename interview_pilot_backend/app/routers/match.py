@@ -30,7 +30,12 @@ async def match_resume(
     if session is None:
         raise HTTPException(status_code=404, detail="Session not found.")
     
-    # Save the JD so Section 3 (/interview) can reuse it.
+    # Save the JD; if it changed, drop stale cached match/interview results.
+    if session.jd_text != body.jd_text:
+        db.query(Analysis).filter(
+            Analysis.session_id == session.id,
+            Analysis.kind.in_(["match", "interview"]),
+        ).delete(synchronize_session=False)
     session.jd_text = body.jd_text
     db.commit()
 
