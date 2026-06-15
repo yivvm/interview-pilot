@@ -45,3 +45,18 @@ def review_resume_session(session_id: str) -> str:
         raise RuntimeError(detail)
     return resp.json()
 
+
+def match_resume_session(session_id: str, jd_text: str) -> str:
+    """POST to /match with the job description; return the analysis JSON."""
+    resp = httpx.post(
+        f"{BACKEND_URL}/match",
+        json={"session_id": session_id, "jd_text": jd_text},
+        timeout=120.0
+    )
+    if resp.status_code != 200:
+        try: 
+            detail = resp.json().get("detail", resp.text)
+        except Exception:
+            detail = resp.text
+        raise RuntimeError(detail)
+    return resp.json()
