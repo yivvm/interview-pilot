@@ -47,7 +47,7 @@ class LLMClient:
                 })
         raise LLMError("Model did not return valid JSON after retry.")
         
-    async def _call(self, messages: list[dict]) -> str:
+    async def _call(self, messages: list[dict], json_mode: bool = True) -> str:
         """Once raw call to Ollama /api/chat; returns the message content string."""
         payload = {
             "model": self.model,
@@ -55,6 +55,8 @@ class LLMClient:
             "format": "json",  # ask Ollama to constrain output to valid JSON
             "stream": False,  # get one complete response, not token-by-token
         }
+        if json_mode:
+            payload["format"] = "json"   # constrain output to valid JSON
         try:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
                 resp = await client.post(f"{self.base_url}/api/chat", json=payload)
@@ -63,3 +65,10 @@ class LLMClient:
             raise LLMError(f"Ollama request failed: {exc}") from exc
         data = resp.json()
         return data["message"]["content"]
+    
+
+    async def chat_messages(self, system: str, messages: list[dict]) -> str:
+        """Conversational free-text completion (no JSON mode)."""
+        full = [{"role": "system"}, {"content": system}, *messages]
+        return await self._call(full, json_mode=False)
+    
