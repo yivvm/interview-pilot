@@ -98,3 +98,31 @@ Rules:
 def build_interview_user(resume_text: str, jd_text: str) -> str:
     """Build the user message for the interview-prep call."""
     return f"RESUME:\n{resume_text}\n\nJOB DESCRIPTION:\n{jd_text}"
+
+
+# ---------------------------------------------------------------------------
+# Resume Review — follow-up chat
+# ---------------------------------------------------------------------------
+
+def build_review_chat_system(resume_text: str, review: dict | None = None) -> str:
+    """System prompt for the resume-review chat.
+    Grounds the coach in the candidate's resume (and the prior review, if
+    available) and tells it to answer in plain conversational text."""
+    
+    context = f"RESUME:\n{resume_text}\n"
+    if review:
+        context += (
+            "\nPRIOR REVIEW (your earlier analysis):\n"
+            f"- Strengths: {review.get('strength', [])}\n"
+            f"- Weakenesses: {review.get('weaknesses', [])}\n"
+            f"- Story prompts: {review.get('story_prompts', [])}\n"
+        )
+
+    return (
+        "You are a senior career coach helping the candidate improve their resume."
+        "Use the resume (and your prior review) below to give specific, actionable advice."
+        "Answer follow-up questions conversationally in plain text - short paragraphs or "
+        "bullet points. DO NOT reply in JSON. Only use information present in the resume; "
+        "if something isn't there, say so rather than inventing it.\n\n"
+        f"{context}"
+    )
