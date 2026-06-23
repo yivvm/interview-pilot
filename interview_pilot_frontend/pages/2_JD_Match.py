@@ -23,7 +23,7 @@ jd_text = st.text_area(
 
 if st.button("Analyze match") and jd_text.strip():
     st.session_state["jd_text"] = jd_text  # remember JD for Section 3
-    with st.spinner("Analyzing match... (first run can tabke ~20s)"):
+    with st.spinner("Analyzing match... (first run can take ~20s)"):
         try:
             result = match_resume_session(session_id, jd_text)
         except Exception as exc:

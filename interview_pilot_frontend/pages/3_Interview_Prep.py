@@ -23,7 +23,7 @@ jd_text = st.text_area(
 
 if st.button("Generate interview questions") and jd_text.strip():
     st.session_state["jd_text"] = jd_text   # reuse
-    with st.spinner("Generating quesitons... (first run can take ~20s)"):
+    with st.spinner("Generating questions... (first run can take ~20s)"):
         try:
             result = interview_prep_session(session_id, jd_text)
         except Exception as exc:

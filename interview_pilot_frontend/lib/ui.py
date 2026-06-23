@@ -49,6 +49,12 @@ div[data-baseweb="textarea"]:focus-within {
 
 /* Slightly larger sidebar text */
 section[data-testid="stSidebar"] * { font-size: 1.05rem; }
+section[data-testid="stSidebar"] .stButton > button {
+    justify-content: flex-start !import;
+}
+section[data-testid="stSidebar"] .stButton > button p {
+    text-align: left !important;
+}
 
 /* Selected page in the sidebar nav */
 section[data-testid="stSidebarNav"] a[aria-current="page"] {
@@ -96,6 +102,7 @@ def resume_input(page_key: str) -> str | None:
                     # New resume -> clear any cache section results in this UI session.
                     for k in ("review_result", "match_result", "interview_result"):
                         st.session_state.pop(k, None)
+                    st.session_state.pop("active_chat_id", None)   # new resume -> fresh empty chat area
                     st.rerun()
     
     return st.session_state.get("session_id")
@@ -119,6 +126,10 @@ def record_upload_time(session_id: str) -> None:
 
 
 def chat_id_for(section: str, session_id: str) -> str:
+    return f"{section}::{session_id}"
+
+
+def get_or_create_chat(section: str, session_id: str) -> str:
     """Return the chat_id for (session, session_id), creating the conversation
     on first use, and mark it the active chat."""
     chats = st.session_state.setdefault("chats", {})
@@ -161,9 +172,9 @@ def render_chat_history() -> None:
         for cid, chat in reversed(list(chats.items())):
             label = f"{chat['section']} & {chat['filename']} & {chat['created_at']}"
             if st.button(
-                lable,
+                label,
                 key=f"hist_{cid}",
-                use_container_with=True,
+                use_container_width=True,
                 type="primary" if cid == active else "secondary",
             ):
                 st.session_state["active_chat_id"] = cid
