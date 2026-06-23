@@ -1,9 +1,10 @@
 import streamlit as st
 
 from lib.api import review_chat, review_resume_session
-from lib.ui import inject_css, resume_input
+from lib.ui import inject_css, render_chat_history, resume_input
 
 inject_css()
+render_chat_history()
 
 st.title("1 · Resume Review")
 
@@ -48,7 +49,7 @@ st.subheader("Ask the coach")
 st.caption("Follow up on the review, e.g. *“How can I make my dashboard bullet stronger?”*")
 
 # Running conversation lives in session_state so it survives reruns.
-if "review_caht" not in st.session_state:
+if "review_chat" not in st.session_state:
     st.session_state["review_chat"] = []
 
 
