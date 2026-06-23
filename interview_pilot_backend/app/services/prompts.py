@@ -56,7 +56,7 @@ Rules:
 - "match_score": your honest 0-100 estimate of how well the resume fits the JD.
 - "matching_skills": requirements the resume already satisfies.
 - "gaps": 3-6 missing or weak requirements, each with a severity and a concrete suggestion.
-- "rewrite_suggestions": 2-4 resume bullets rewritten to better target this JD.
+- "rewrite_suggestions": 5-7 resume bullets rewritten to better target this JD.
 - Use only information present in the resume; do not invent experience.
 - Respond with JSON only."""
 

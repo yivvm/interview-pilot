@@ -7,6 +7,12 @@ from lib.api import upload_resume
 
 _CUSTOM_CSS = """
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+/* App-wide font */
+html, body, .stApp, [data-testid="stAppViewContainer"] *, section[data-testid="stSidebar"] * {
+    font-family: 'Poppins', sans-serif !important;
+}
+
 /* JD text area: blue border + glow on focus */
 div[data-baseweb="textarea"]:focus-within {
     border-color: #095BD9 !important;
@@ -49,16 +55,60 @@ div[data-baseweb="textarea"]:focus-within {
 
 /* Slightly larger sidebar text */
 section[data-testid="stSidebar"] * { font-size: 1.05rem; }
-section[data-testid="stSidebar"] .stButton > button {
-    justify-content: flex-start !import;
+/* Chat-history items: force the label hard-left (cover both selector forms) */
+section[data-testid="stSidebar"] [data-testid="stButton"] button,
+section[data-testid="stSidebar"] .stButton button {
+    display: flex !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
 }
-section[data-testid="stSidebar"] .stButton > button p {
+section[data-testid="stSidebar"] [data-testid="stButton"] button > div,
+section[data-testid="stSidebar"] .stButton button > div,
+section[data-testid="stSidebar"] [data-testid="stButton"] button [data-testid="stMarkdownContainer"],
+section[data-testid="stSidebar"] .stButton button [data-testid="stMarkdownContainer"] {
+    width: 100% !important;
+    margin: 0 !important;
+    text-align: left !important;
+}
+section[data-testid="stSidebar"] [data-testid="stButton"] button p,
+section[data-testid="stSidebar"] .stButton button p {
+    width: 100% !important;
+    margin: 0 !important;
     text-align: left !important;
 }
 
-/* Selected page in the sidebar nav */
+/* Selected page in the sidebar nav (kept darker for contrast against the sidebar) */
 section[data-testid="stSidebarNav"] a[aria-current="page"] {
-    background-color: #E8F0FB !important;
+    background-color: #E6E8EA !important;
+}
+/* Unified page surface — matches the file-uploader dropzone / chat bubbles */
+.ip-note,
+[data-testid="stChatMessage"],
+[data-testid="stChatInput"] {
+    background-color: #F0F2F6 !important;
+}
+
+/* Assistant chat avatar in theme blue */
+[data-testid="chatAvatarIcon-assistant"] {
+    background-color: #095BD9 !important;
+    color: #FFFFFF !important;
+}
+[data-testid="chatAvatarIcon-assistant"] svg {
+    fill: #FFFFFF !important;
+    color: #FFFFFF !important;
+}
+
+/* Assistant reply: no background fill (plain — only the avatar marks it) */
+[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]) {
+    background-color: transparent !important;
+}
+
+/* Note boxes (background comes from the unified surface rule above) */
+.ip-note {
+    color: #0B2A52;
+    border-radius: 0.5rem;
+    padding: 0.6rem 0.9rem;
+    margin-bottom: 0.5rem;
 }
 
 /* Collapse the empty block this style injection creates */
@@ -78,7 +128,10 @@ def resume_input(page_key: str) -> str | None:
     """
     current = st.session_state.get("resume_filename")
     if current:
-        st.success(f"Using resume: {current}")
+        st.markdown(
+            f'<div class="ip-note">Using resume: <strong>{current}</strong></div>',
+            unsafe_allow_html=True,
+        )
 
     with st.expander("Upload a different resume" if current else "Upload your resume", expanded=not current):
         uploaded = st.file_uploader(
@@ -135,7 +188,7 @@ def get_or_create_chat(section: str, session_id: str) -> str:
     chats = st.session_state.setdefault("chats", {})
     cid = chat_id_for(section, session_id)
     if cid not in chats:
-        upload_times = st.session_state.get("upload_resume", {})
+        upload_times = st.session_state.get("upload_times", {})
         chats[cid] = {
             "section": section,
             "session_id": session_id,
@@ -176,6 +229,7 @@ def render_chat_history() -> None:
                 key=f"hist_{cid}",
                 use_container_width=True,
                 type="primary" if cid == active else "secondary",
+                help=label,                     # full text on hover (CSS truncates the visible label)
             ):
                 st.session_state["active_chat_id"] = cid
                 st.rerun()

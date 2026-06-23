@@ -19,7 +19,10 @@ st.title("1 · Resume Review")
 
 session_id = resume_input("review")
 if not session_id:
-    st.info("Upload aresume above to begin")
+    st.markdown(
+        '<div class="ip-note">Upload a resume above to begin.</div>',
+        unsafe_allow_html=True,
+    )
     st.stop()
 
 st.write(f"Reviewing resume: **{st.session_state.get('resume_filename', '')}**")
@@ -66,6 +69,17 @@ st.caption(
 # or by clicking an item in the sidebar history.)
 active_cid = st.session_state.get("active_chat_id")
 messages = get_messages(active_cid) if active_cid else []
+
+if not messages:
+    st.markdown(
+        '<div class="ip-note">No messages yet — ask a question below to start the conversation.</div>',
+        unsafe_allow_html=True,
+    )
+else:
+    # let the user reset the current conversation without re-uploading the resume.
+    if st.button("Clear chat", key="clear_review_chat"):
+        st.session_state["chats"][active_cid]["messages"].clear()
+        st.rerun()
 for msg in messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
@@ -93,3 +107,6 @@ if prompt:
     
     # 3. Persist the assistant turn so it replays on the next rerun.
     add_message(cid, "assistant", reply)
+
+    # Rerun so the conversation replays cleanly and the empty-state note disappears.
+    st.rerun()

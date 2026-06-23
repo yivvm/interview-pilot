@@ -9,7 +9,10 @@ st.title("2 · Job Description Match")
 
 session_id = resume_input("match")
 if not session_id:
-    st.info("Upload a resume above to begin.")
+    st.markdown(
+        '<div class="ip-note">Upload a resume above to begin.</div>',
+        unsafe_allow_html=True,
+    )
     st.stop()
 
 st.write(f"Matching resume: **{st.session_state.get('resume_filename', '')}**")

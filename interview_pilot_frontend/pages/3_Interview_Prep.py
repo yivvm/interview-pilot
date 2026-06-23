@@ -9,7 +9,10 @@ st.title("3 · Interview Prep")
 
 session_id = resume_input("inteview")
 if not session_id:
-    st.info("Upload a resume above to begin.")
+    st.markdown(
+        '<div class="ip-note">Upload a resume above to begin.</div>',
+        unsafe_allow_html=True,
+    )
     st.stop()
 
 st.write(f"Prepping for: **{st.session_state.get('resume_filename', '')}**")
@@ -37,7 +40,7 @@ if result:
         st.caption("✓ Loaded from saved result")
     
     for i, q in enumerate(result["questions"], start=1):
-        with st.expander(f"Q{i}. {q['question']}  ·  _{q.get('category', '')}_"):
+        with st.expander(f"Q{i}. {q['question']}  ·  _{q.get('category', '')}_", expanded=(i == 1)):
             for bullet in q["answer_bullets"]:
                 st.markdown(f"- {bullet}")
             st.caption(f"Based on: {q.get('resume_anchor', '—')}")
