@@ -43,3 +43,8 @@ class InterviewResponse(BaseModel):
     questions: list[InterviewQuestion]
     cached: bool = False
 
+
+class ReviewChatResponse(BaseModel):
+    reply: str
+
+

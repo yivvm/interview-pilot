@@ -113,7 +113,7 @@ def build_review_chat_system(resume_text: str, review: dict | None = None) -> st
     if review:
         context += (
             "\nPRIOR REVIEW (your earlier analysis):\n"
-            f"- Strengths: {review.get('strength', [])}\n"
+            f"- Strengths: {review.get('strengths', [])}\n"
             f"- Weakenesses: {review.get('weaknesses', [])}\n"
             f"- Story prompts: {review.get('story_prompts', [])}\n"
         )

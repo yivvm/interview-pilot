@@ -9,9 +9,9 @@ import streamlit as st
 
 from lib.ui import inject_css
 
-inject_css()
-
 st.set_page_config(page_title="InterviewPilot", layout="wide")
+
+inject_css()
 
 st.title("Interview Pilot")
 st.write("AI-powered resume review and interview prep - all running locally.")

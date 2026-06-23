@@ -46,13 +46,18 @@ class LLMClient:
                     "content": "That was not valid JSON. Respond with ONLY a valid JSON object, no prose."
                 })
         raise LLMError("Model did not return valid JSON after retry.")
+    
+    async def chat_messages(self, system: str, messages: list[dict]) -> str:
+        """Conversational free-text completion (no JSON mode)."""
+        full = [{"role": "system", "content": system}, *messages]
+        return await self._call(full, json_mode=False)
         
     async def _call(self, messages: list[dict], json_mode: bool = True) -> str:
         """Once raw call to Ollama /api/chat; returns the message content string."""
         payload = {
             "model": self.model,
             "messages": messages,
-            "format": "json",  # ask Ollama to constrain output to valid JSON
+            # "format": "json",  # ask Ollama to constrain output to valid JSON
             "stream": False,  # get one complete response, not token-by-token
         }
         if json_mode:
@@ -66,9 +71,4 @@ class LLMClient:
         data = resp.json()
         return data["message"]["content"]
     
-
-    async def chat_messages(self, system: str, messages: list[dict]) -> str:
-        """Conversational free-text completion (no JSON mode)."""
-        full = [{"role": "system"}, {"content": system}, *messages]
-        return await self._call(full, json_mode=False)
     
