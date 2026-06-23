@@ -1,6 +1,6 @@
 import streamlit as st
 
-from lib.api import review_resume_session
+from lib.api import review_chat, review_resume_session
 from lib.ui import inject_css, resume_input
 
 inject_css()
@@ -40,3 +40,39 @@ if result:
     st.subheader("Stories to share")
     for item in result["story_prompts"]:
         st.markdown(f"- {item}")
+
+
+# --- Chat: ask the coach follow-up questions about the resume ----------
+st.divider()
+st.subheader("Ask the coach")
+st.caption("Follow up on the review, e.g. *“How can I make my dashboard bullet stronger?”*")
+
+# Running conversation lives in session_state so it survives reruns.
+if "review_caht" not in st.session_state:
+    st.session_state["review_chat"] = []
+
+
+# Replay the conversation so far.
+for msg in st.session_state["review_chat"]:
+    with st.chat_message(msg["role"]):
+        st.markdown(msg["content"])
+
+# Input box pinned at the bottom; returns the text when the user hits Enter.
+prompt = st.chat_input("Ask about your resume...")
+if prompt:
+    # 1. Record + show the user's message.
+    st.session_state["review_chat"].append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
+
+    # 2. Call the backend with the full history; show the reply.
+    with st.chat_message("assistant"):
+        with st.spinner("Thinking..."):
+            try:
+                reply = review_chat(session_id, st.session_state['review_chat'])
+            except Exception as exc:
+                reply = f"Error: {exc}"
+        st.markdown(reply)
+    
+    # 3. Persist the assistant turn so it replays on the next rerun.
+    st.session_state["review_chat"].append({"role": "assistant", "content": reply})

@@ -79,3 +79,20 @@ def interview_prep_session(session_id: str, jd_text: str | None = None) -> dict:
             detail = resp.text
         raise RuntimeError(detail)
     return resp.json()
+
+
+def review_chat(session_id: str, messages: list[dict]) -> str:
+    """POST a chat turn to /review/chat; return the assistant's reply text.
+    `message` is the running conversation: [{"role": "user" | "assistant|, ...}]"""
+    resp = httpx.post(
+        f"{BACKEND_URL}/review/chat",
+        json={"session_id": session_id, "messages": messages},
+        timeout=120.0,
+    )
+    if resp.status_code != 200:
+        try:
+            detail = resp.json().get("detail", resp.text)
+        except Exception:
+            detail = resp.text
+        raise RuntimeError(detail)
+    return resp.json()["reply"]
