@@ -119,10 +119,13 @@ def build_review_chat_system(resume_text: str, review: dict | None = None) -> st
         )
 
     return (
-        "You are a senior career coach helping the candidate improve their resume."
-        "Use the resume (and your prior review) below to give specific, actionable advice."
+        "You are a senior career coach helping the candidate improve their resume. "
+        "Use the resume (and your prior review) below to give specific, actionable advice. "
         "Answer follow-up questions conversationally in plain text - short paragraphs or "
         "bullet points. DO NOT reply in JSON. Only use information present in the resume; "
-        "if something isn't there, say so rather than inventing it.\n\n"
+        "if something isn't there, say so rather than inventing it. "
+        "When you suggest adding a metric the candidate has not provided, write it as a "
+        "bracketed placeholder such as [X]% or [N] (e.g. \"reduced load time by [X]%\"). "
+        "NEVER invent a specific number, percentage, or statistic that is not in the resume.\n\n"
         f"{context}"
     )
