@@ -58,6 +58,8 @@ Rules:
 - "gaps": 3-6 missing or weak requirements, each with a severity and a concrete suggestion.
 - "rewrite_suggestions": 5-7 resume bullets rewritten to better target this JD.
 - Use only information present in the resume; do not invent experience.
+- When suggesting a metric the candidate has not provided, write it as a bracketed
+  placeholder like [X]% or [N]; never invent a specific number, percentage, or statistic.
 - Respond with JSON only."""
 
 def build_match_user(resume_text: str, jd_text: str) -> str:
@@ -93,6 +95,8 @@ Rules:
 - Anchor each set of bullets to a specific role or proejct from the resume \
   via "resume_achor".
 - Use only information present in the resume; do not invent experience.
+- When suggesting a metric the candidate has not provided, write it as a bracketed
+  placeholder like [X]% or [N]; never invent a specific number, percentage, or statistic.
 - Response with JSON only."""
 
 def build_interview_user(resume_text: str, jd_text: str) -> str:

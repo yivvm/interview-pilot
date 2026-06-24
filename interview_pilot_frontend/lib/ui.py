@@ -81,6 +81,17 @@ section[data-testid="stSidebar"] .stButton button p {
 section[data-testid="stSidebarNav"] a[aria-current="page"] {
     background-color: #E6E8EA !important;
 }
+/* Relabel the entry page's nav item ("streamlit app" -> INTERVIEW PILOT) */
+section[data-testid="stSidebarNav"] li:first-child a span,
+section[data-testid="stSidebarNav"] li:first-child a p {
+    font-size: 0 !important;
+}
+section[data-testid="stSidebarNav"] li:first-child a span::after {
+    content: "INTERVIEW PILOT";
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
 /* Unified page surface — matches the file-uploader dropzone / chat bubbles */
 .ip-note,
 [data-testid="stChatMessage"],
