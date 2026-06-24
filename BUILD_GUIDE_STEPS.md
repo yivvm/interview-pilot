@@ -1,5 +1,7 @@
 # interview-pilot-steps & tips
 
+![Interview Pilot build roadmap — seven milestones from skeleton to a working local AI app](docs/build-roadmap.png)
+
 ## Part 1 — Milestone Tracker
 
 ### Milestone 1 — Skeleton ✅ (complete)
@@ -67,6 +69,12 @@ Notes: ✅ theme color · ✅ chat (M5) · ✅ chat-history list · ✅ upload m
 - ⬜ Step 4 — backup demo video + final commit/tag
 
 Grand total: ~18–30 hours across 6 milestones — comfortably the "1 week" your plan budgets (Days 1–7), with buffer. Pace varies a lot with how much Ollama/debugging fights you and how much you pause to learn.
+
+## A reusable blueprint
+
+The same engine powers other "upload → analyze → chat" apps — keep the plumbing, swap the domain.
+
+![Interview Pilot — a reusable blueprint: same structure, customize per domain, with example apps](docs/reuse-blueprint.png)
 
 ## Part 2 — Detailed Build Walkthrough
 
