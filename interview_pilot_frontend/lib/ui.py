@@ -1,6 +1,8 @@
 """Shared UI helpers (global CSS injection)."""
 
+import hashlib
 from datetime import datetime
+
 import streamlit as st
 
 from lib.api import upload_resume
@@ -87,7 +89,7 @@ section[data-testid="stSidebarNav"] li:first-child a p {
     font-size: 0 !important;
 }
 section[data-testid="stSidebarNav"] li:first-child a span::after {
-    content: "INTERVIEW PILOT";
+    content: "Overview";
     font-size: 1.05rem;
     font-weight: 600;
     letter-spacing: 0.02em;
@@ -193,11 +195,25 @@ def chat_id_for(section: str, session_id: str) -> str:
     return f"{section}::{session_id}"
 
 
-def get_or_create_chat(section: str, session_id: str) -> str:
-    """Return the chat_id for (session, session_id), creating the conversation
-    on first use, and mark it the active chat."""
+def _jd_title(jd_text: str) -> str:
+    """Short label from a JD: its first non-empty line, truncated."""
+    for line in (jd_text or "").splitlines():
+        line = line.strip()
+        if line:
+            return line[:40] + ("…" if len(line) > 40 else "")
+    return "JD"
+
+
+def get_or_create_chat(section: str, session_id: str, jd_text: str | None = None) -> str:
+    """Return the chat_id for this conversation, creating it on first use and
+    marking it active. JD-dependent sections get a per-JD thread (keyed by the
+    JD's content) so different JDs for the same resume coexist in history."""
     chats = st.session_state.setdefault("chats", {})
-    cid = chat_id_for(section, session_id)
+    if jd_text and jd_text.strip():
+        slug = hashlib.md5(jd_text.strip().encode("utf-8")).hexdigest()[:8]
+        cid = f"{section}::{session_id}::{slug}"
+    else:
+        cid = chat_id_for(section, session_id)
     if cid not in chats:
         upload_times = st.session_state.get("upload_times", {})
         chats[cid] = {
@@ -205,6 +221,7 @@ def get_or_create_chat(section: str, session_id: str) -> str:
             "session_id": session_id,
             "filename": st.session_state.get("resume_filename", "resume"),
             "created_at": upload_times.get(session_id, _now_label()),
+            "jd_title": _jd_title(jd_text) if (jd_text and jd_text.strip()) else "",
             "messages": [],   # list of {"role": ..., "content": ...}
         }
     st.session_state["active_chat_id"] = cid
@@ -233,8 +250,12 @@ def render_chat_history() -> None:
             st.caption("No conversation yet.")
             return
         active = st.session_state.get("active_chat_id")
+        PRETTY = {"resume_review": "Resume Review", "jd_match": "JD Match", "interview_prep": "Interview Prep"}
+        RESULT_KEY = {"resume_review": "review_result", "jd_match": "match_result", "interview_prep": "interview_result"}
         for cid, chat in reversed(list(chats.items())):
-            label = f"{chat['section']} & {chat['filename']} & {chat['created_at']}"
+            sec = PRETTY.get(chat["section"], chat["section"])
+            detail = chat.get("jd_title") or chat["filename"]   # JD title for JD sections, else filename
+            label = f"{sec} · {detail} · {chat['created_at']}"
             if st.button(
                 label,
                 key=f"hist_{cid}",
@@ -243,6 +264,12 @@ def render_chat_history() -> None:
                 help=label,                     # full text on hover (CSS truncates the visible label)
             ):
                 st.session_state["active_chat_id"] = cid
+                # Jump to the matching section tab (applied before the radio renders).
+                st.session_state["_pending_tab"] = PRETTY.get(chat["section"], "Resume Review")
+                # Restore this chat's analysis so the tab shows the right result.
+                rk = RESULT_KEY.get(chat["section"])
+                if rk and "result" in chat:
+                    st.session_state[rk] = chat["result"]
                 st.rerun()
 
 

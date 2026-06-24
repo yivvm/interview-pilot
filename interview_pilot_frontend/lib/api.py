@@ -69,7 +69,7 @@ def interview_prep_session(session_id: str, jd_text: str | None = None) -> dict:
         payload["jd_text"] = jd_text
     resp = httpx.post(
         f"{BACKEND_URL}/interview",
-        json={"session_id": session_id},
+        json=payload,
         timeout=120.0,
     )
     if resp.status_code != 200:
