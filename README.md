@@ -4,24 +4,6 @@ AI-powered prep tool that helps candidates land interviews and perform once they
 
 ---
 
-## Features
-
-### 1 · Resume Review
-- **Analysis** — strengths, weaknesses, and story prompts pulled from your résumé.
-- **AI coach chat** — ask follow-up questions ("How do I make this bullet stronger?") and get specific, grounded rewrites.
-  - **Grounded & honest** — answers only from what's actually in your résumé; when something isn't there, it says so instead of inventing it.
-  - **No fabricated metrics** — when suggesting numbers you haven't provided, it uses `[X]`/`[N]` placeholders rather than making up statistics.
-  - **Multi-turn** — remembers the conversation, so you can say "give me two shorter variations of that."
-- **Chat history** — a sidebar list of past conversations (one per résumé + section), kept for the session and reloadable on click.
-
-### 2 · JD Match
-Paste a job description to get a match score, the skills you already satisfy, gaps (with severity), and **5–7 résumé bullets rewritten** to better target that JD.
-
-### 3 · Interview Prep
-Generates likely interview questions tailored to your résumé + the JD, each with answer-bullet scaffolds and the résumé detail it's anchored to (first question expanded by default).
-
----
-
 ## User journey
 
 Six steps from a raw résumé to interview-ready:
@@ -37,26 +19,42 @@ Six steps from a raw résumé to interview-ready:
 
 ---
 
+## Features
+
+![Interview Pilot — what it does: Resume Review, JD Match, and Interview Prep](docs/features.png)
+
+### 1 · Resume Review
+- **Analysis** — strengths, weaknesses, and story-to-share prompts pulled from your résumé.
+- "Stories to share" is the inspiration prompt list — questions like "You mention 'led a team' — how big was the team and what was the measurable outcome?"
+- **AI coach chat** — ask follow-up questions ("How do I make this bullet stronger?") and get specific, grounded rewrites.
+  - **Grounded & honest** — answers only from what's actually in your résumé; when something isn't there, it says so instead of inventing it.
+  - **No fabricated metrics** — when suggesting numbers you haven't provided, it uses `[X]`/`[N]` placeholders rather than making up statistics.
+  - **Multi-turn** — remembers the conversation, so you can say "give me two shorter variations of that."
+- **Chat history** — a sidebar list of past conversations (one per résumé + section), kept for the session and reloadable on click.
+
+### 2 · JD Match
+Paste a job description to get a match score, the skills you already satisfy, gaps (with severity), and **5–7 résumé bullets rewritten** to better target that JD.
+
+### 3 · Interview Prep
+Generates likely interview questions tailored to your résumé + the JD, each with answer-bullet scaffolds and the résumé detail it's anchored to (first question expanded by default).
+
+
+---
+
+## Built for trust
+
+![Interview Pilot — built for trust: grounded answers, no fabricated metrics, runs 100% locally, no paid APIs or model training](docs/trust.png)
+
+- **Grounded answers** — uses only what's in your résumé; if it's not there, it says so (no hallucinated experience).
+- **No fabricated metrics** — suggests numbers as `[X]`/`[N]` placeholders; never invents a statistic you didn't provide.
+- **Runs 100% locally** — the model runs on your machine via Ollama; your résumé is never sent to a third party.
+- **No paid APIs, no training** — built on an open-source LLM; no external API calls, and your data trains nothing.
+
+---
+
 ## Architecture
 
-```mermaid
-flowchart LR
-    U([Résumé<br/>PDF / DOCX]) --> UI
-
-    subgraph local["Runs entirely on your machine"]
-        UI["Streamlit UI<br/>:8501"]
-        API["FastAPI backend · uvicorn<br/>:8000"]
-        LLM["Ollama · llama3.1:8b<br/>:11434"]
-        DB[("SQLite<br/>sessions + cache")]
-        P["pypdf / python-docx<br/>parse → text"]
-    end
-
-    UI <-->|HTTP / JSON| API
-    API -->|prompt| LLM
-    LLM -->|JSON (analysis) / text (chat)| API
-    API --> DB
-    API --> P
-```
+![InterviewPilot architecture — Streamlit UI (:8501) ↔ FastAPI + uvicorn (:8000), which calls Ollama llama3.1:8b (:11434), caches to SQLite, and parses résumés with pypdf / python-docx — all running locally](docs/architecture.png)
 
 - **Frontend** (`interview_pilot_frontend/`) — Streamlit multipage app; a thin HTTP client (`lib/api.py`) talks to the backend.
 - **Backend** (`interview_pilot_backend/`) — FastAPI; parses résumés (pypdf / python-docx), builds prompts, calls Ollama's `/api/chat`, and caches results in SQLite so repeat views are instant.
@@ -76,6 +74,8 @@ Section 3 · Interview Prep  resume_text + jd_text             → prompt → LL
 ---
 
 ## Tech stack
+
+![Interview Pilot tech stack — Streamlit frontend, FastAPI + uvicorn backend, Ollama + llama3.1:8b for local AI, SQLite with pypdf / python-docx for storage and parsing](docs/tech-stack.png)
 
 | Layer | Choice | Why |
 |---|---|---|
@@ -100,7 +100,11 @@ interview-pilot/
 ├── implementation_plan.md
 ├── resume_sample1_Frontend_Engineer.pdf / .docx   # sample résumé for the demo
 ├── docs/
-│   └── architecture.png                  # legacy diagram (README now uses an inline Mermaid graph)
+│   ├── architecture.png                  # architecture diagram (Architecture section)
+│   ├── features.png                      # "what it does" slide (Features section)
+│   ├── tech-stack.png                    # tech-stack slide (Tech stack section)
+│   ├── trust.png                         # "built for trust" slide (Built for trust section)
+│   └── user-journey.png                  # user-journey slide (User journey section)
 │
 ├── interview_pilot_backend/              # FastAPI service
 │   ├── requirements.txt
