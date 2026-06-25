@@ -2,6 +2,8 @@
 
 AI-powered prep tool that helps candidates land interviews and perform once they're in the room. It reviews your résumé, tailors it to a specific job description, and generates likely interview questions with answer scaffolds — **all running locally** on an open-source LLM, so your résumé never leaves your machine.
 
+![InterviewPilot app screenshot](docs/app-screenshot.png)
+
 ---
 
 ## User journey
